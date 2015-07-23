@@ -1,0 +1,29 @@
+{
+    "name": "connectholland/tactician-prioritycommand-plugin",
+    "description": "Tactician plugin that allows adding a priority to a command which influences when and in what order commands will be executed",
+    "require": {
+        "league/tactician": "^0.6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7",
+        "symfony/event-dispatcher": "^2.7"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/",
+            "vendor/league/tactician/tests"
+        ]
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ron Rademaker",
+            "email": "ron@connectholland.nl"
+        }
+    ]
+}
