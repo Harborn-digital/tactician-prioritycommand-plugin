@@ -16,7 +16,7 @@ Similar you can create an interface to some messaging / queueing system (I don't
 # Suggested priorities
 Obviously you're free to give your commands any priority you like, but these guidelines may help:
 
-Urgent: anything that affects the output you send to your user OR anything that affects the behavior of incoming request
-Request: anything that affects any subsequent requests from your user
-Sequence: anything that affects the behavior of following commands (i.e. because it sets an id in your database something else depends on)
-Free: everything you need to get done but it doesn't matter much when
+- Urgent: anything that affects the output you send to your user OR anything that affects the behavior of incoming request
+- Request: anything that affects any subsequent requests from your user
+- Sequence: anything that affects the behavior of following commands (i.e. because it sets an id in your database something else depends on)
+- Free: everything you need to get done but it doesn't matter much when
