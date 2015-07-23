@@ -1,7 +1,7 @@
 # tactician-prioritycommand-plugin
 Tactician plugin that allows adding a priority to a command which influences when and in what order commands will be executed
 
-[![Build Status](https://travis-ci.org/RonRademaker/tactician-prioritycommand-plugin.svg?branch=master)]https://travis-ci.org/RonRademaker/tactician-prioritycommand-plugin()
+[![Build Status](https://travis-ci.org/RonRademaker/tactician-prioritycommand-plugin.svg?branch=master)](https://travis-ci.org/RonRademaker/tactician-prioritycommand-plugin)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/3e8f0f6d-43d3-4761-ae75-14461264b8df/mini.png)](https://insight.sensiolabs.com/projects/3e8f0f6d-43d3-4761-ae75-14461264b8df)
 
 # Concept
