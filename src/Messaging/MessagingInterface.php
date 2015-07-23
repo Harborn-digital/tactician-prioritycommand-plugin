@@ -1,21 +1,22 @@
 <?php
+
 namespace ConnectHolland\Tactician\PriorityPlugin\EventDispatcher;
 
 /**
- * Interface to define how to inject your messaging / queueing system into the PriorityMiddleware
+ * Interface to define how to inject your messaging / queueing system into the PriorityMiddleware.
  *
  * @author Ron Rademaker
  */
-interface MessagingInterface {
+interface MessagingInterface
+{
     /**
-     * queueCallable
+     * queueCallable.
      *
      * Queue $command in the messaging system
      *
      * @since 1.0
-     * @access public
+     *
      * @return
      **/
     public function queueCallable(callable $command);
-
 }
