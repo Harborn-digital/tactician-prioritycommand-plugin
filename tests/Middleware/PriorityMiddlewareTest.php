@@ -6,6 +6,7 @@ use ConnectHolland\Tactician\PriorityPlugin\EventDispatcher\SymfonyEventDispatch
 use ConnectHolland\Tactician\PriorityPlugin\Middleware\PriorityMiddleware;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\FreeCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\RequestCommand;
+use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\SecondSequenceCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\SequenceCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\UrgentCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Messaging\InMemoryMessaging;
@@ -53,6 +54,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
                 AddTaskCommand::class => $this->methodHandler,
                 UrgentCommand::class => $this->methodHandler,
                 SequenceCommand::class => $this->methodHandler,
+                SecondSequenceCommand::class => $this->methodHandler,
                 RequestCommand::class => $this->methodHandler,
                 FreeCommand::class => $this->methodHandler,
 
@@ -112,12 +114,12 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
 
         $this->commandBus->handle(new RequestCommand());
         $this->commandBus->handle(new SequenceCommand());
-        $this->commandBus->handle(new SequenceCommand());
+        $this->commandBus->handle(new SecondSequenceCommand());
         $this->assertNotContains('handleRequestCommand', $this->methodHandler->getMethodsInvoked());
 
         $eventDispatcher->dispatch('kernel.terminate');
         // all sequence commands come before request commands
-        $this->assertEquals(['handleSequenceCommand', 'handleSequenceCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
+        $this->assertEquals(['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
     }
 
 /**
@@ -146,7 +148,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['handleFreeCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
     }
 
-/**
+    /**
      * Test queue a command.
      */
     public function testFreeCommandWithMessaging()
