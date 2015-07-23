@@ -13,3 +13,10 @@ Default supported command types:
 You can create an interface to your event dispatcher (one for symfony ships with this library). You should attach the PriorityMiddleware::REQUEST queue to some event you always dispatch, preferably after output is sent to your users.
 Similar you can create an interface to some messaging / queueing system (I don't use one yet so I haven't created any yet) for the PriorityMiddleware::FREE queue.
 
+# Suggested priorities
+Obviously you're free to give your commands any priority you like, but these guidelines may help:
+
+Urgent: anything that affects the output you send to your user OR anything that affects the behavior of incoming request
+Request: anything that affects any subsequent requests from your user
+Sequence: anything that affects the behavior of following commands (i.e. because it sets an id in your database something else depends on)
+Free: everything you need to get done but it doesn't matter much when
