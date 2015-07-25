@@ -15,6 +15,8 @@ interface MessagingInterface
      * Queue $command in the messaging system
      *
      * @since 1.0
+     * 
+     * @api
      *
      * @return
      **/

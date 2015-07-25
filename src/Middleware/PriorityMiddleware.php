@@ -50,6 +50,8 @@ class PriorityMiddleware implements Middleware
      * Makes sure the command is executed, but maybe not just yet
      *
      * @since 1.0
+     * 
+     * @api
      *
      * @param type     $command
      * @param callable $next
@@ -68,26 +70,14 @@ class PriorityMiddleware implements Middleware
         }
     }
 
-/**
-     * updateMessagingQueue.
-     * 
-     * Puts everything of $queue its messaging system
-     * 
-     * @param string $queue
-     */
-    private function updateMessagingQueue($queue)
-    {
-        if (array_key_exists($queue, $this->commandQueue) && (count($this->commandQueue) > 0)) {
-            $this->addQueueToMessagingSystem($queue, $this->messagingSystem[$queue]);
-        }
-    }
-
     /**
      * executeAll.
      *
      * Execute everything that is queued, optionally in $queueOrder
      *
      * @since 1.0
+     * 
+     * @api
      *
      * @param array $queueOrder
      */
@@ -107,30 +97,13 @@ class PriorityMiddleware implements Middleware
     }
 
     /**
-     * addQueueToMessagingSystem.
-     *
-     * Describe here what the function should do
-     *
-     * @param string             $queue
-     * @param MessagingInterface $messagingSystem
-     **/
-    private function addQueueToMessagingSystem($queue, MessagingInterface $messagingSystem)
-    {
-        foreach ($this->commandQueue[$queue] as $commandInfo) {
-            $command = $commandInfo['command'];
-            $next = $commandInfo['next'];
-            $messagingSystem->queueCallable(function () use ($command, $next) {
-                $next($command);
-            });
-        }
-    }
-
-    /**
      * executeQueueAtEvent.
      *
      * Registers the execution of $queue at $eventName in $eventDispatcher
      *
      * @since 1.0
+     * 
+     * @api
      *
      * @param string                   $queue
      * @param string                   $eventName
@@ -149,6 +122,8 @@ class PriorityMiddleware implements Middleware
      * Registers $messagingSystem for any event in $queue
      *
      * @since 1.0
+     * 
+     * @api
      *
      * @param string             $queue
      * @param MessagingInterface $messagingSystem
@@ -157,6 +132,39 @@ class PriorityMiddleware implements Middleware
     {
         $this->messagingSystem[$queue] = $messagingSystem;
         $this->updateMessagingQueue($queue);
+    }
+    
+    /**
+     * updateMessagingQueue.
+     * 
+     * Puts everything of $queue its messaging system
+     * 
+     * @param string $queue
+     */
+    private function updateMessagingQueue($queue)
+    {
+        if (array_key_exists($queue, $this->commandQueue) && (count($this->commandQueue) > 0)) {
+            $this->addQueueToMessagingSystem($queue, $this->messagingSystem[$queue]);
+        }
+    }
+    
+    /**
+     * addQueueToMessagingSystem.
+     *
+     * Describe here what the function should do
+     *
+     * @param string             $queue
+     * @param MessagingInterface $messagingSystem
+     **/
+    private function addQueueToMessagingSystem($queue, MessagingInterface $messagingSystem)
+    {
+        foreach ($this->commandQueue[$queue] as $commandInfo) {
+            $command = $commandInfo['command'];
+            $next = $commandInfo['next'];
+            $messagingSystem->queueCallable(function () use ($command, $next) {
+                $next($command);
+            });
+        }
     }
 
     /**
