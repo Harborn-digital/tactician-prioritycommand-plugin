@@ -32,17 +32,17 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
      */
     private $priorityMiddleware;
 
-/**
+    /**
      * Command Bus for testing.
      */
     private $commandBus;
 
-/**
+    /**
      * DynamicMethodsHander.
      */
     private $methodHandler;
 
-/**
+    /**
      * Creates a command bus to use for testing.
      */
     public function setUp()
@@ -67,7 +67,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->commandBus = new CommandBus([$this->priorityMiddleware, $handlerMiddleware]);
     }
 
-/**     
+    /**     
      * Tests if regular commands (no implementations of PriorityCommandInterface are executed).
      **/
     public function testRegularCommandIsExecuted()
@@ -78,7 +78,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertContains('handleAddTaskCommand', $this->methodHandler->getMethodsInvoked());
     }
 
-/**     
+    /**     
      * Tests if urgent commands are executed immediately.
      **/
     public function testUrgentCommand()
@@ -89,7 +89,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertContains('handleUrgentCommand', $this->methodHandler->getMethodsInvoked());
     }
 
-/**     
+    /**     
      * Tests if sequence commands are executed before urgent commands if passed to the bus before the urgent comand.
      **/
     public function testSequenceBeforeUrgentCommand()
@@ -103,7 +103,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['handleSequenceCommand', 'handleUrgentCommand'], $this->methodHandler->getMethodsInvoked());
     }
 
-/**
+    /**
      * Test to execute the request queue on a kernel.terminate event.
      */
     public function testExecuteRequestOnTermination()
@@ -122,7 +122,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
     }
 
-/**
+    /**
      * Test to execute a free command on execute all.
      */
     public function testFreeCommandAtExecuteAll()
@@ -134,7 +134,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['handleFreeCommand'], $this->methodHandler->getMethodsInvoked());
     }
 
-/**
+    /**
      * Test custom order in execute all.
      */
     public function testCustomOrderAtExecuteAll()
@@ -161,7 +161,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['handleFreeCommand'], $this->methodHandler->getMethodsInvoked());
     }
 
-/**
+    /**
      * Test queue a command before setting the messaging system.
      */
     public function testMessagingWithCommandBeforeMessagingSystem()

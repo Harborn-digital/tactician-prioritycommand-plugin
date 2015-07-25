@@ -133,8 +133,8 @@ class PriorityMiddleware implements Middleware
         $this->messagingSystem[$queue] = $messagingSystem;
         $this->updateMessagingQueue($queue);
     }
-    
-    /**
+
+/**
      * updateMessagingQueue.
      * 
      * Puts everything of $queue its messaging system
@@ -147,8 +147,8 @@ class PriorityMiddleware implements Middleware
             $this->addQueueToMessagingSystem($queue, $this->messagingSystem[$queue]);
         }
     }
-    
-    /**
+
+/**
      * addQueueToMessagingSystem.
      *
      * Describe here what the function should do

@@ -1,11 +1,12 @@
 <?php
+
 namespace ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command;
 
 /**
- * Fixture to order sequence commands
+ * Fixture to order sequence commands.
  *
  * @author ron
  */
-class SecondSequenceCommand extends SequenceCommand {
-    
+class SecondSequenceCommand extends SequenceCommand
+{
 }
