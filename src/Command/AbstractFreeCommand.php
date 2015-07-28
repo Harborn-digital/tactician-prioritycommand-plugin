@@ -2,6 +2,8 @@
 
 namespace ConnectHolland\Tactician\PriorityPlugin\Command;
 
+use ConnectHolland\Tactician\PriorityPlugin\Middleware\PriorityMiddleware;
+
 /**
  * Command that may be executed at any time (the bus is free to take any route, as long as it ends up at it's handler at some time).
  *
@@ -22,6 +24,6 @@ abstract class AbstractFreeCommand implements PriorityCommandInterface
      * */
     public function getQueue()
     {
-        return 'free';
+        return PriorityMiddleware::FREE;
     }
 }

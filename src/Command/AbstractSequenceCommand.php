@@ -2,6 +2,8 @@
 
 namespace ConnectHolland\Tactician\PriorityPlugin\Command;
 
+use ConnectHolland\Tactician\PriorityPlugin\Middleware\PriorityMiddleware;
+
 /**
  * Command that may be executed at any time, but no other command may be executed before this.
  *
@@ -22,6 +24,6 @@ abstract class AbstractSequenceCommand implements PriorityCommandInterface
      * */
     public function getQueue()
     {
-        return 'sequence';
+        return PriorityMiddleware::SEQUENCE;
     }
 }
