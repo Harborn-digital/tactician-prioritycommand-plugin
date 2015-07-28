@@ -59,7 +59,9 @@ class PriorityMiddleware implements Middleware
     public function execute($command, callable $next)
     {
         if (!$command instanceof PriorityCommandInterface) {
-            return $this->executeCommand($command, $next); // not a priority command, but make sure sequence commands are executed before this one
+            return $this->executeCommand(function() use($command, $next) {
+                $next($command);
+            }); // not a priority command, but make sure sequence commands are executed before this one
         } else {
             $this->queueCommand($command, $next);
 
@@ -134,7 +136,7 @@ class PriorityMiddleware implements Middleware
         $this->updateMessagingQueue($queue);
     }
 
-/**
+    /**
      * updateMessagingQueue.
      * 
      * Puts everything of $queue its messaging system
@@ -148,22 +150,18 @@ class PriorityMiddleware implements Middleware
         }
     }
 
-/**
+    /**
      * addQueueToMessagingSystem.
      *
-     * Describe here what the function should do
+     * Adds all commands from $queue to the $messagingSystem
      *
      * @param string             $queue
      * @param MessagingInterface $messagingSystem
      **/
     private function addQueueToMessagingSystem($queue, MessagingInterface $messagingSystem)
     {
-        foreach ($this->commandQueue[$queue] as $commandInfo) {
-            $command = $commandInfo['command'];
-            $next = $commandInfo['next'];
-            $messagingSystem->queueCallable(function () use ($command, $next) {
-                $next($command);
-            });
+        while ($command = array_shift($this->commandQueue[$queue])) {
+            $messagingSystem->queueCallable($command);
         }
     }
 
@@ -177,11 +175,9 @@ class PriorityMiddleware implements Middleware
     private function executeQueue($queue)
     {
         if (array_key_exists($queue, $this->commandQueue) && (count($this->commandQueue[$queue]) > 0)) {
-            foreach ($this->commandQueue[$queue] as $command) {
-                $this->executeCommand($command['command'], $command['next'], ($queue === static::SEQUENCE));
+            while ($command = array_shift($this->commandQueue[$queue])) {
+                $this->executeCommand($command, ($queue === static::SEQUENCE));
             }
-
-            $this->commandQueue[$queue] = [];
         }
     }
 
@@ -190,16 +186,16 @@ class PriorityMiddleware implements Middleware
      *
      * Executes $command after executing any sequence commands
      *
-     * @param string   $command
-     * @param callable $next
+     * @param callable $command
+     * @param boolean $handlingSequence
      * */
-    private function executeCommand($command, callable $next, $handlingSequence = false)
+    private function executeCommand(callable $command, $handlingSequence = false)
     {
         if (!$handlingSequence) {
             $this->executeQueue(static::SEQUENCE);
         }
 
-        return $next($command);
+        return $command();
     }
 
     /**
@@ -218,6 +214,8 @@ class PriorityMiddleware implements Middleware
             $this->commandQueue[$queue] = [];
         }
 
-        $this->commandQueue[$queue][] = ['command' => $command, 'next' => $next];
+        $this->commandQueue[$queue][] = function() use ($command, $next) {
+            $next($command);
+        };
     }
 }
