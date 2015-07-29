@@ -173,4 +173,18 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $messagingSystem->consume();
         $this->assertEquals(['handleFreeCommand'], $this->methodHandler->getMethodsInvoked());
     }
+    
+    /**
+     * Test to execute everything left in the bus when it's destroyed
+     */
+    public function testExecuteAllOnDestruction()    
+    {
+        $this->commandBus->handle(new RequestCommand());
+        $this->commandBus->handle(new SequenceCommand());
+        $this->commandBus->handle(new SecondSequenceCommand());
+        
+        $this->priorityMiddleware->__destruct(); // Setting to null or unsetting doesn't call __destruct somehow; any improvements to this test are greatly appreciated
+        // all sequence commands come before request commands
+        $this->assertEquals(['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
+    }
 }

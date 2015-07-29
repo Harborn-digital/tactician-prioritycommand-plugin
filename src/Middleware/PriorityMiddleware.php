@@ -135,6 +135,15 @@ class PriorityMiddleware implements Middleware
         $this->messagingSystem[$queue] = $messagingSystem;
         $this->updateMessagingQueue($queue);
     }
+    
+    /**
+     * Execute all commands this in a queue on destruct to make sure all commands are executed
+     * 
+     * @since 1.0
+     */
+    public function __destruct() {
+        $this->executeAll();
+    }
 
     /**
      * updateMessagingQueue.
