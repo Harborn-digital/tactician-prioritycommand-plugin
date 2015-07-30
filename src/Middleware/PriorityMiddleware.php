@@ -11,7 +11,10 @@ use League\Tactician\Middleware;
 /**
  * Middleware that handles commands according to their priority.
  *
- * As commands are not always executed immediately, this middleware does not support return values. If you want your return value you should dispatch an event from your handler container the return value and subscribe to that event. 
+ * As commands are not always executed immediately, this
+ * middleware does not support return values.
+ * If you want your return value you should dispatch an event from
+ * your handler container the return value and subscribe to that event.
  *
  * Default supported command types:
  * - FreeCommand (bus, you may take a detour)
@@ -37,14 +40,14 @@ class PriorityMiddleware implements Middleware
      */
     private $messagingSystem = [];
 
-/**
+    /**
      * __construct.
-     * 
+     *
      * Creates a new PriorityMiddleware
-     * 
+     *
      * @since 1.0
-     * 
-     * @api 
+     *
+     * @api
      */
     public function __construct()
     {
@@ -57,7 +60,7 @@ class PriorityMiddleware implements Middleware
      * Makes sure the command is executed, but maybe not just yet
      *
      * @since 1.0
-     * 
+     *
      * @api
      *
      * @param type     $command
@@ -85,7 +88,7 @@ class PriorityMiddleware implements Middleware
      * Execute everything that is queued, optionally in $queueOrder
      *
      * @since 1.0
-     * 
+     *
      * @api
      *
      * @param array $queueOrder
@@ -111,7 +114,7 @@ class PriorityMiddleware implements Middleware
      * Registers the execution of $queue at $eventName in $eventDispatcher
      *
      * @since 1.0
-     * 
+     *
      * @api
      *
      * @param string                   $queue
@@ -121,7 +124,7 @@ class PriorityMiddleware implements Middleware
     public function executeQueueAtEvent($queue, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         $eventDispatcher->addListener($eventName, function () use ($queue) {
-           $this->executeQueue($queue);
+            $this->executeQueue($queue);
         });
     }
 
@@ -131,7 +134,7 @@ class PriorityMiddleware implements Middleware
      * Registers $messagingSystem for any event in $queue
      *
      * @since 1.0
-     * 
+     *
      * @api
      *
      * @param string             $queue
@@ -143,10 +146,10 @@ class PriorityMiddleware implements Middleware
         $this->addQueueToMessagingSystem($queue, $this->messagingSystem[$queue]);
     }
 
-/**
+    /**
      * Execute all commands this in a queue on destruct to make sure all commands are executed
      * Note: this is a fallback method, you should really set event handlers and messaging systems to manage this.
-     * 
+     *
      * @since 1.0
      */
     public function __destruct()

@@ -17,18 +17,18 @@ class Manager
     const SEQUENCE = 'sequence';
     const FREE = 'free';
 
-/**
+    /**
      * Array of queues being managed.
-     * 
+     *
      * @var array
      */
     private $queues = [];
 
-/**
+    /**
      * queueCommand.
      *
-     * Puts a command in the correct place of the queue          
-     * 
+     * Puts a command in the correct place of the queue
+     *
      * @param string   $command
      * @param callable $next
      * */
@@ -45,11 +45,11 @@ class Manager
         });
     }
 
-/**
+    /**
      * getFromQueue.
-     * 
+     *
      * Gets the next command from $queue
-     * 
+     *
      * @since 1.0
      *
      * @param string $queue
@@ -63,11 +63,11 @@ class Manager
         }
     }
 
-/**
+    /**
      * getQueues.
-     * 
+     *
      * Return a list of known queues
-     * 
+     *
      * @since 1.0
      *
      * @return array

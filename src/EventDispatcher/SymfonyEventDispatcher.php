@@ -24,7 +24,7 @@ class SymfonyEventDispatcher implements EventDispatcherInterface
      * Create a new SymfonyEventDispatcher for $eventDipatcher
      *
      * @since 1.0
-     * 
+     *
      * @api
      *
      * @param EventDispatcher
@@ -40,7 +40,7 @@ class SymfonyEventDispatcher implements EventDispatcherInterface
      * Let the event dispatcher listen for $eventName to call $eventHandler
      *
      * @since 1.0
-     * 
+     *
      * @api
      *
      * @param string   $eventName

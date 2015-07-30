@@ -7,7 +7,8 @@ use ConnectHolland\Tactician\PriorityPlugin\Queue\Manager;
 /**
  * Command that may be executed at any time, but no other command may be executed before this.
  *
- * Useful for things that don't effect output, but where it's result is important for later commands (i.e. storing something in a database)
+ * Useful for things that don't effect output, but where it's result is important for later commands
+ * Example: storing something in a database
  *
  * @author Ron Rademaker
  */

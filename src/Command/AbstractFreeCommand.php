@@ -5,7 +5,8 @@ namespace ConnectHolland\Tactician\PriorityPlugin\Command;
 use ConnectHolland\Tactician\PriorityPlugin\Queue\Manager;
 
 /**
- * Command that may be executed at any time (the bus is free to take any route, as long as it ends up at it's handler at some time).
+ * Command that may be executed at any time
+ * The bus is free to take any route, as long as it ends up at it's handler at some time.
  *
  * Useful for sending e-mails and such things, handle these using a message queue or something
  *

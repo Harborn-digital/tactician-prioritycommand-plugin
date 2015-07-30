@@ -15,7 +15,7 @@ interface EventDispatcherInterface
      * Let the event dispatcher listen for $eventName to call $eventHandler
      *
      * @since 1.0
-     * 
+     *
      * @api
      *
      * @param string   $eventName

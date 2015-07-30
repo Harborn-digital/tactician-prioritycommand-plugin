@@ -58,8 +58,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
                 SecondSequenceCommand::class => $this->methodHandler,
                 RequestCommand::class => $this->methodHandler,
                 FreeCommand::class => $this->methodHandler,
-
-]),
+            ]),
             new HandleClassNameInflector()
         );
 
@@ -68,7 +67,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->commandBus = new CommandBus([$this->priorityMiddleware, $handlerMiddleware]);
     }
 
-    /**     
+    /**
      * Tests if regular commands (no implementations of PriorityCommandInterface are executed).
      **/
     public function testRegularCommandIsExecuted()
@@ -79,7 +78,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertContains('handleAddTaskCommand', $this->methodHandler->getMethodsInvoked());
     }
 
-    /**     
+    /**
      * Tests if urgent commands are executed immediately.
      **/
     public function testUrgentCommand()
@@ -90,7 +89,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertContains('handleUrgentCommand', $this->methodHandler->getMethodsInvoked());
     }
 
-    /**     
+    /**
      * Tests if sequence commands are executed before urgent commands if passed to the bus before the urgent comand.
      **/
     public function testSequenceBeforeUrgentCommand()
@@ -101,7 +100,10 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->commandBus->handle($sequence);
         $this->assertNotContains('handleSequenceCommand', $this->methodHandler->getMethodsInvoked());
         $this->commandBus->handle($urgent);
-        $this->assertEquals(['handleSequenceCommand', 'handleUrgentCommand'], $this->methodHandler->getMethodsInvoked());
+        $this->assertEquals(
+            ['handleSequenceCommand', 'handleUrgentCommand'],
+            $this->methodHandler->getMethodsInvoked()
+        );
     }
 
     /**
@@ -111,7 +113,11 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
     {
         $eventDispatcher = new EventDispatcher();
 
-        $this->priorityMiddleware->executeQueueAtEvent(Manager::REQUEST, 'kernel.terminate', new SymfonyEventDispatcher($eventDispatcher));
+        $this->priorityMiddleware->executeQueueAtEvent(
+            Manager::REQUEST,
+            'kernel.terminate',
+            new SymfonyEventDispatcher($eventDispatcher)
+        );
 
         $this->commandBus->handle(new RequestCommand());
         $this->commandBus->handle(new SequenceCommand());
@@ -120,7 +126,10 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
 
         $eventDispatcher->dispatch('kernel.terminate');
         // all sequence commands come before request commands
-        $this->assertEquals(['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
+        $this->assertEquals(
+            ['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'],
+            $this->methodHandler->getMethodsInvoked()
+        );
     }
 
     /**
@@ -184,8 +193,13 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->commandBus->handle(new SequenceCommand());
         $this->commandBus->handle(new SecondSequenceCommand());
 
-        $this->priorityMiddleware->__destruct(); // Setting to null or unsetting doesn't call __destruct somehow; any improvements to this test are greatly appreciated
+        // Setting to null or unsetting doesn't call __destruct somehow
+        // any improvements to this test are greatly appreciated
+        $this->priorityMiddleware->__destruct();
         // all sequence commands come before request commands
-        $this->assertEquals(['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
+        $this->assertEquals(
+            ['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'],
+            $this->methodHandler->getMethodsInvoked()
+        );
     }
 }
