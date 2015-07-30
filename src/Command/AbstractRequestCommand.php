@@ -2,7 +2,7 @@
 
 namespace ConnectHolland\Tactician\PriorityPlugin\Command;
 
-use ConnectHolland\Tactician\PriorityPlugin\Middleware\PriorityMiddleware;
+use ConnectHolland\Tactician\PriorityPlugin\Queue\Manager;
 
 /**
  * Command that may be executed at any time during the current request.
@@ -24,6 +24,6 @@ abstract class AbstractRequestCommand implements PriorityCommandInterface
      * */
     public function getQueue()
     {
-        return PriorityMiddleware::REQUEST;
+        return Manager::REQUEST;
     }
 }

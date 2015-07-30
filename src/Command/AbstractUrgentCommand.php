@@ -2,7 +2,7 @@
 
 namespace ConnectHolland\Tactician\PriorityPlugin\Command;
 
-use ConnectHolland\Tactician\PriorityPlugin\Middleware\PriorityMiddleware;
+use ConnectHolland\Tactician\PriorityPlugin\Queue\Manager;
 
 /**
  * Command that should be executed immediately.
@@ -22,6 +22,6 @@ abstract class AbstractUrgentCommand implements PriorityCommandInterface
      * */
     public function getQueue()
     {
-        return PriorityMiddleware::URGENT;
+        return Manager::URGENT;
     }
 }

@@ -5,6 +5,7 @@ namespace ConnectHolland\Tactician\PriorityPlugin\Middleware;
 use ConnectHolland\Tactician\PriorityPlugin\Command\PriorityCommandInterface;
 use ConnectHolland\Tactician\PriorityPlugin\EventDispatcher\EventDispatcherInterface;
 use ConnectHolland\Tactician\PriorityPlugin\EventDispatcher\MessagingInterface;
+use ConnectHolland\Tactician\PriorityPlugin\Queue\Manager;
 use League\Tactician\Middleware;
 
 /**
@@ -23,19 +24,11 @@ use League\Tactician\Middleware;
 class PriorityMiddleware implements Middleware
 {
     /**
-     * Default QUEUE names (but you may add any queue you like).
-     * */
-    const URGENT = 'urgent';
-    const REQUEST = 'request';
-    const SEQUENCE = 'sequence';
-    const FREE = 'free';
-
-    /**
-     * Queue of commands.
+     * Queue manager.
      *
-     * @var array
+     * @var Manager
      */
-    private $commandQueue = [];
+    private $queueManager;
 
     /**
      * Messaging systems.
@@ -43,6 +36,20 @@ class PriorityMiddleware implements Middleware
      * @var array
      */
     private $messagingSystem = [];
+
+/**
+     * __construct.
+     * 
+     * Creates a new PriorityMiddleware
+     * 
+     * @since 1.0
+     * 
+     * @api 
+     */
+    public function __construct()
+    {
+        $this->queueManager = new Manager();
+    }
 
     /**
      * execute.
@@ -59,15 +66,15 @@ class PriorityMiddleware implements Middleware
     public function execute($command, callable $next)
     {
         if (!$command instanceof PriorityCommandInterface) {
-            return $this->executeCommand(function() use($command, $next) {
+            return $this->executeCommand(function () use ($command, $next) {
                 $next($command);
             }); // not a priority command, but make sure sequence commands are executed before this one
         } else {
-            $this->queueCommand($command, $next);
+            $this->queueManager->queueCommand($command, $next);
 
-            $this->executeQueue(static::URGENT);
-            foreach (array_keys($this->messagingSystem) as $queue) {
-                $this->updateMessagingQueue($queue);
+            $this->executeQueue(Manager::URGENT);
+            foreach ($this->messagingSystem as $queue => $messagingSystem) {
+                $this->addQueueToMessagingSystem($queue, $messagingSystem);
             }
         }
     }
@@ -91,7 +98,7 @@ class PriorityMiddleware implements Middleware
         foreach ($queueOrder as $queue) {
             $this->executeQueue($queue);
         }
-        foreach (array_keys($this->commandQueue) as $queue) {
+        foreach ($this->queueManager->getQueues() as $queue) {
             if (!in_array($queue, $queueOrder)) {
                 $this->executeQueue($queue);
             }
@@ -133,30 +140,18 @@ class PriorityMiddleware implements Middleware
     public function setMessagingSystem($queue, MessagingInterface $messagingSystem)
     {
         $this->messagingSystem[$queue] = $messagingSystem;
-        $this->updateMessagingQueue($queue);
+        $this->addQueueToMessagingSystem($queue, $this->messagingSystem[$queue]);
     }
-    
-    /**
+
+/**
      * Execute all commands this in a queue on destruct to make sure all commands are executed
+     * Note: this is a fallback method, you should really set event handlers and messaging systems to manage this.
      * 
      * @since 1.0
      */
-    public function __destruct() {
-        $this->executeAll();
-    }
-
-    /**
-     * updateMessagingQueue.
-     * 
-     * Puts everything of $queue its messaging system
-     * 
-     * @param string $queue
-     */
-    private function updateMessagingQueue($queue)
+    public function __destruct()
     {
-        if (array_key_exists($queue, $this->commandQueue) && (count($this->commandQueue) > 0)) {
-            $this->addQueueToMessagingSystem($queue, $this->messagingSystem[$queue]);
-        }
+        $this->executeAll();
     }
 
     /**
@@ -169,7 +164,7 @@ class PriorityMiddleware implements Middleware
      **/
     private function addQueueToMessagingSystem($queue, MessagingInterface $messagingSystem)
     {
-        while ($command = array_shift($this->commandQueue[$queue])) {
+        while ($command = $this->queueManager->getFromQueue($queue)) {
             $messagingSystem->queueCallable($command);
         }
     }
@@ -183,10 +178,8 @@ class PriorityMiddleware implements Middleware
      * */
     private function executeQueue($queue)
     {
-        if (array_key_exists($queue, $this->commandQueue) && (count($this->commandQueue[$queue]) > 0)) {
-            while ($command = array_shift($this->commandQueue[$queue])) {
-                $this->executeCommand($command, ($queue === static::SEQUENCE));
-            }
+        while ($command = $this->queueManager->getFromQueue($queue)) {
+            $this->executeCommand($command, ($queue === Manager::SEQUENCE));
         }
     }
 
@@ -196,35 +189,14 @@ class PriorityMiddleware implements Middleware
      * Executes $command after executing any sequence commands
      *
      * @param callable $command
-     * @param boolean $handlingSequence
+     * @param bool     $handlingSequence
      * */
     private function executeCommand(callable $command, $handlingSequence = false)
     {
         if (!$handlingSequence) {
-            $this->executeQueue(static::SEQUENCE);
+            $this->executeQueue(Manager::SEQUENCE);
         }
 
         return $command();
-    }
-
-    /**
-     * queueCommand.
-     *
-     * Puts a command in the correct place of the queue
-     *
-     * @param string   $command
-     * @param callable $next
-     * */
-    private function queueCommand($command, callable $next)
-    {
-        $queue = $command->getQueue();
-
-        if (!array_key_exists($queue, $this->commandQueue)) {
-            $this->commandQueue[$queue] = [];
-        }
-
-        $this->commandQueue[$queue][] = function() use ($command, $next) {
-            $next($command);
-        };
     }
 }

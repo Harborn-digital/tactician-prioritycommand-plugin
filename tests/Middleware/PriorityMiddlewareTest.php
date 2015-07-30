@@ -4,6 +4,7 @@ namespace ConnectHolland\Tactician\PriorityPlugin\tests\Middleware;
 
 use ConnectHolland\Tactician\PriorityPlugin\EventDispatcher\SymfonyEventDispatcher;
 use ConnectHolland\Tactician\PriorityPlugin\Middleware\PriorityMiddleware;
+use ConnectHolland\Tactician\PriorityPlugin\Queue\Manager;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\FreeCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\RequestCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\SecondSequenceCommand;
@@ -110,7 +111,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
     {
         $eventDispatcher = new EventDispatcher();
 
-        $this->priorityMiddleware->executeQueueAtEvent(PriorityMiddleware::REQUEST, 'kernel.terminate', new SymfonyEventDispatcher($eventDispatcher));
+        $this->priorityMiddleware->executeQueueAtEvent(Manager::REQUEST, 'kernel.terminate', new SymfonyEventDispatcher($eventDispatcher));
 
         $this->commandBus->handle(new RequestCommand());
         $this->commandBus->handle(new SequenceCommand());
@@ -154,7 +155,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
     public function testFreeCommandWithMessaging()
     {
         $messagingSystem = new InMemoryMessaging();
-        $this->priorityMiddleware->setMessagingSystem(PriorityMiddleware::FREE, $messagingSystem);
+        $this->priorityMiddleware->setMessagingSystem(Manager::FREE, $messagingSystem);
         $this->commandBus->handle(new FreeCommand());
         $this->assertNotContains('handleFreeCommand', $this->methodHandler->getMethodsInvoked());
         $messagingSystem->consume();
@@ -169,20 +170,20 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         $messagingSystem = new InMemoryMessaging();
         $this->commandBus->handle(new FreeCommand());
         $this->assertNotContains('handleFreeCommand', $this->methodHandler->getMethodsInvoked());
-        $this->priorityMiddleware->setMessagingSystem(PriorityMiddleware::FREE, $messagingSystem);
+        $this->priorityMiddleware->setMessagingSystem(Manager::FREE, $messagingSystem);
         $messagingSystem->consume();
         $this->assertEquals(['handleFreeCommand'], $this->methodHandler->getMethodsInvoked());
     }
-    
-    /**
-     * Test to execute everything left in the bus when it's destroyed
+
+/**
+     * Test to execute everything left in the bus when it's destroyed.
      */
-    public function testExecuteAllOnDestruction()    
+    public function testExecuteAllOnDestruction()
     {
         $this->commandBus->handle(new RequestCommand());
         $this->commandBus->handle(new SequenceCommand());
         $this->commandBus->handle(new SecondSequenceCommand());
-        
+
         $this->priorityMiddleware->__destruct(); // Setting to null or unsetting doesn't call __destruct somehow; any improvements to this test are greatly appreciated
         // all sequence commands come before request commands
         $this->assertEquals(['handleSequenceCommand', 'handleSecondSequenceCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
