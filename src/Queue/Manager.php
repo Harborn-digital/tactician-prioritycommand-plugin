@@ -2,6 +2,8 @@
 
 namespace ConnectHolland\Tactician\PriorityPlugin\Queue;
 
+use ConnectHolland\Tactician\PriorityPlugin\Command\PriorityCommandInterface;
+
 /**
  * Class to manage the command queues.
  *
@@ -29,10 +31,10 @@ class Manager
      *
      * Puts a command in the correct place of the queue
      *
-     * @param string   $command
+     * @param PriorityCommandInterface $command
      * @param callable $next
      * */
-    public function queueCommand($command, callable $next)
+    public function queueCommand(PriorityCommandInterface $command, callable $next)
     {
         $queue = $command->getQueue();
 
