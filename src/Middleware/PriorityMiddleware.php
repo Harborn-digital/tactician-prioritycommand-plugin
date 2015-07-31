@@ -68,17 +68,17 @@ class PriorityMiddleware implements Middleware
      */
     public function execute($command, callable $next)
     {
-        if (!$command instanceof PriorityCommandInterface) {
-            return $this->executeCommand(function () use ($command, $next) {
-                $next($command);
-            }); // not a priority command, but make sure sequence commands are executed before this one
-        } else {
+        if ($command instanceof PriorityCommandInterface) {
             $this->queueManager->queueCommand($command, $next);
 
             $this->executeQueue(Manager::URGENT);
             foreach ($this->messagingSystem as $queue => $messagingSystem) {
                 $this->addQueueToMessagingSystem($queue, $messagingSystem);
             }
+        } else {
+            return $this->executeCommand(function () use ($command, $next) {
+                $next($command);
+            }); // not a priority command, but make sure sequence commands are executed before this one
         }
     }
 
