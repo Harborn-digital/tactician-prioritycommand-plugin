@@ -147,17 +147,6 @@ class PriorityMiddleware implements Middleware
     }
 
     /**
-     * Execute all commands this in a queue on destruct to make sure all commands are executed
-     * Note: this is a fallback method, you should really set event handlers and messaging systems to manage this.
-     *
-     * @since 1.0
-     */
-    public function __destruct()
-    {
-        $this->executeAll();
-    }
-
-    /**
      * addQueueToMessagingSystem.
      *
      * Adds all commands from $queue to the $messagingSystem
