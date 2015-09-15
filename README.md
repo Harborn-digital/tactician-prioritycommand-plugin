@@ -4,9 +4,9 @@ Tactician plugin that allows adding a priority to a command which influences whe
 [![Build Status](https://travis-ci.org/RonRademaker/tactician-prioritycommand-plugin.svg?branch=master)](https://travis-ci.org/RonRademaker/tactician-prioritycommand-plugin)
 [![Coverage Status](https://coveralls.io/repos/RonRademaker/tactician-prioritycommand-plugin/badge.svg?branch=master&service=github)](https://coveralls.io/github/RonRademaker/tactician-prioritycommand-plugin?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/3e8f0f6d-43d3-4761-ae75-14461264b8df/mini.png)](https://insight.sensiolabs.com/projects/3e8f0f6d-43d3-4761-ae75-14461264b8df)
-[![Latest Stable Version](https://poser.pugx.org/connectholland/tactician-prioritycommand-plugin/v/stable)](https://packagist.org/packages/connectholland/tactician-prioritycommand-plugin) 
-[![Total Downloads](https://poser.pugx.org/connectholland/tactician-prioritycommand-plugin/downloads)](https://packagist.org/packages/connectholland/tactician-prioritycommand-plugin) 
-[![Latest Unstable Version](https://poser.pugx.org/connectholland/tactician-prioritycommand-plugin/v/unstable)](https://packagist.org/packages/connectholland/tactician-prioritycommand-plugin) 
+[![Latest Stable Version](https://poser.pugx.org/connectholland/tactician-prioritycommand-plugin/v/stable)](https://packagist.org/packages/connectholland/tactician-prioritycommand-plugin)
+[![Total Downloads](https://poser.pugx.org/connectholland/tactician-prioritycommand-plugin/downloads)](https://packagist.org/packages/connectholland/tactician-prioritycommand-plugin)
+[![Latest Unstable Version](https://poser.pugx.org/connectholland/tactician-prioritycommand-plugin/v/unstable)](https://packagist.org/packages/connectholland/tactician-prioritycommand-plugin)
 [![License](https://poser.pugx.org/connectholland/tactician-prioritycommand-plugin/license)](https://packagist.org/packages/connectholland/tactician-prioritycommand-plugin)
 
 # Concept
@@ -29,10 +29,9 @@ Obviously you're free to give your commands any priority you like, but these gui
 - Urgent: anything that affects the output you send to your user OR anything that affects the behavior of incoming request
 - Request: anything that affects any subsequent requests from your user
 - Sequence: anything that affects the behavior of following commands (i.e. because it sets an id in your database something else depends on)
-- Free: everything you need to get done but it doesn't matter much when
 
 # Issues
-Commands are not executed immediately which makes it impossible to return values. If you rely on the return value of a command, you can't make that command a priority command without breaking your application. The fix for this is to add an event listener before putting the command on the bus and dispatching an event from the handler which passes the return value. 
+Commands are not executed immediately which makes it impossible to return values. If you rely on the return value of a command, you can't make that command a priority command without breaking your application. The fix for this is to add an event listener before putting the command on the bus and dispatching an event from the handler which passes the return value.
 Example, code with return value
 
 ```

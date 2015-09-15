@@ -96,7 +96,7 @@ class PriorityMiddleware implements Middleware
     public function executeAll(array $queueOrder = array())
     {
         if (count($queueOrder) === 0) {
-            $queueOrder = ['sequence', 'urgent', 'request', 'free'];
+            $queueOrder = ['sequence', 'urgent', 'request'];
         }
         foreach ($queueOrder as $queue) {
             $this->executeQueue($queue);

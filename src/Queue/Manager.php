@@ -17,7 +17,6 @@ class Manager
     const URGENT = 'urgent';
     const REQUEST = 'request';
     const SEQUENCE = 'sequence';
-    const FREE = 'free';
 
     /**
      * Array of queues being managed.

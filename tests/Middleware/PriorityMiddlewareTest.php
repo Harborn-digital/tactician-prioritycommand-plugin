@@ -5,7 +5,6 @@ namespace ConnectHolland\Tactician\PriorityPlugin\tests\Middleware;
 use ConnectHolland\Tactician\PriorityPlugin\EventDispatcher\SymfonyEventDispatcher;
 use ConnectHolland\Tactician\PriorityPlugin\Middleware\PriorityMiddleware;
 use ConnectHolland\Tactician\PriorityPlugin\Queue\Manager;
-use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\FreeCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\RequestCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\SecondSequenceCommand;
 use ConnectHolland\Tactician\PriorityPlugin\Tests\Fixtures\Command\SequenceCommand;
@@ -56,8 +55,7 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
                 UrgentCommand::class => $this->methodHandler,
                 SequenceCommand::class => $this->methodHandler,
                 SecondSequenceCommand::class => $this->methodHandler,
-                RequestCommand::class => $this->methodHandler,
-                FreeCommand::class => $this->methodHandler,
+                RequestCommand::class => $this->methodHandler
             ]),
             new HandleClassNameInflector()
         );
@@ -132,59 +130,8 @@ class PriorityMiddlewareTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * Test to execute a free command on execute all.
-     */
-    public function testFreeCommandAtExecuteAll()
-    {
-        $this->commandBus->handle(new FreeCommand());
-        $this->assertNotContains('handleFreeCommand', $this->methodHandler->getMethodsInvoked());
-
-        $this->priorityMiddleware->executeAll();
-        $this->assertEquals(['handleFreeCommand'], $this->methodHandler->getMethodsInvoked());
-    }
 
     /**
-     * Test custom order in execute all.
-     */
-    public function testCustomOrderAtExecuteAll()
-    {
-        $this->commandBus->handle(new FreeCommand());
-        $this->commandBus->handle(new RequestCommand());
-        $this->assertNotContains('handleFreeCommand', $this->methodHandler->getMethodsInvoked());
-        $this->assertNotContains('handleRequestCommand', $this->methodHandler->getMethodsInvoked());
-
-        $this->priorityMiddleware->executeAll(['free']); // request should be done later in the defaults
-        $this->assertEquals(['handleFreeCommand', 'handleRequestCommand'], $this->methodHandler->getMethodsInvoked());
-    }
-
-    /**
-     * Test queue a command.
-     */
-    public function testFreeCommandWithMessaging()
-    {
-        $messagingSystem = new InMemoryMessaging();
-        $this->priorityMiddleware->setMessagingSystem(Manager::FREE, $messagingSystem);
-        $this->commandBus->handle(new FreeCommand());
-        $this->assertNotContains('handleFreeCommand', $this->methodHandler->getMethodsInvoked());
-        $messagingSystem->consume();
-        $this->assertEquals(['handleFreeCommand'], $this->methodHandler->getMethodsInvoked());
-    }
-
-    /**
-     * Test queue a command before setting the messaging system.
-     */
-    public function testMessagingWithCommandBeforeMessagingSystem()
-    {
-        $messagingSystem = new InMemoryMessaging();
-        $this->commandBus->handle(new FreeCommand());
-        $this->assertNotContains('handleFreeCommand', $this->methodHandler->getMethodsInvoked());
-        $this->priorityMiddleware->setMessagingSystem(Manager::FREE, $messagingSystem);
-        $messagingSystem->consume();
-        $this->assertEquals(['handleFreeCommand'], $this->methodHandler->getMethodsInvoked());
-    }
-
-/**
      * Test to execute everything left in the bus when it's destroyed.
      */
     public function testExecuteAllOnDestruction()
